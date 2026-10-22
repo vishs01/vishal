@@ -141,6 +141,36 @@
 
     .loading-msg{min-height:1.6em;font-weight:600}
 
+    /* pingu */
+    .pingu-wrap{display:flex;flex-direction:column;align-items:center;margin:4px 0 8px}
+    .pingu{width:110px;height:auto;cursor:pointer;-webkit-tap-highlight-color:transparent}
+    .pingu .body{transform-origin:60px 135px;animation:waddle 1.6s ease-in-out infinite}
+    @keyframes waddle{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg)}}
+    .pingu .flipper-r{transform-origin:96px 82px;animation:wave 1s ease-in-out infinite}
+    @keyframes wave{0%,100%{transform:rotate(0)}50%{transform:rotate(-28deg)}}
+    .pingu .beak{transform-origin:60px 64px;transition:transform .15s ease}
+    .pingu.noot .beak{transform:scale(1.5,1.35)}
+    .pingu.jump{animation:jump .7s ease-in-out infinite}
+    @keyframes jump{0%,100%{transform:translateY(0)}40%{transform:translateY(-16px)}}
+    .speech{
+      position:relative;background:#fff2f6;border:2px solid var(--pink);
+      border-radius:14px;padding:6px 12px;font-weight:700;font-size:.92rem;
+      margin-bottom:10px;max-width:260px;
+    }
+    .speech::after{
+      content:"";position:absolute;left:50%;bottom:-9px;transform:translateX(-50%) rotate(45deg);
+      width:12px;height:12px;background:#fff2f6;border-right:2px solid var(--pink);border-bottom:2px solid var(--pink);
+    }
+
+    /* countdown */
+    .countdown{background:linear-gradient(160deg,#ff4d8d,#ff8fb4);color:#fff;border-radius:18px;padding:16px 10px;margin:16px 0}
+    .countdown h3{margin:0 0 10px;font-size:1rem}
+    .cd-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+    .cd-grid div{background:rgba(255,255,255,.2);border-radius:12px;padding:8px 2px}
+    .cd-grid b{display:block;font-size:1.7rem;font-variant-numeric:tabular-nums;line-height:1.1}
+    .cd-grid span{font-size:.72rem;opacity:.9}
+    .countdown .tiny{color:#fff;opacity:.9;margin-top:10px}
+
     /* confetti */
     .confetti{
       position:fixed;top:-30px;z-index:100;pointer-events:none;
@@ -163,7 +193,7 @@
 
     <!-- STEP 1: intro -->
     <section class="step active" id="step1">
-      <div class="big-emoji wobble">💌</div>
+      <div class="pingu-slot" data-say="Noot noot! 👋 I have a delivery 💌"></div>
       <h1>Hey <span class="her-name">you</span>.</h1>
       <p>Yes, you. The prettiest person to ever open this link.</p>
       <p class="muted">I have something to tell you, and this time I'm not doing it over text.</p>
@@ -176,10 +206,10 @@
     <!-- STEP 2: the crime scene -->
     <section class="step" id="step2">
       <h2>Exhibit A: The Crime 🚨</h2>
-      <p class="muted">4 months ago, I asked you the most important question of my life like this:</p>
+      <p class="muted"><span class="months-ago">4 months ago</span>, I asked you the most important question of my life like this:</p>
 
       <div class="phone" aria-label="Recreation of the original text message">
-        <div class="phone-head">iMessage · 4 months ago</div>
+        <div class="phone-head">iMessage · <span class="months-ago">4 months ago</span></div>
         <div class="bubble me">hey</div>
         <div class="bubble me">so like… wanna be my gf? 👉👈</div>
         <div class="read">Read</div>
@@ -206,7 +236,7 @@
 
     <!-- STEP 4: THE question -->
     <section class="step" id="step4">
-      <div class="big-emoji" id="askEmoji">🥺</div>
+      <div class="pingu-slot" id="askPingu" data-say="🥺"></div>
       <h1 id="askTitle"><span class="her-name">Machu</span>, will you be my girlfriend?</h1>
       <p class="muted" id="askSub">(again, but properly this time — no texting allowed)</p>
       <div class="btn-row" id="btnRow">
@@ -217,14 +247,24 @@
 
     <!-- STEP 5: she said yes -->
     <section class="step" id="step5">
-      <div class="big-emoji wobble">🥳</div>
+      <div class="pingu-slot" data-jump data-say="NOOT NOOT!!! 🎉"></div>
       <h1>SHE SAID YES! (again)</h1>
-      <p>Happy 4 month anniversary, <span class="her-name">babe</span> ❤️</p>
+      <p><b id="monthsDone">4</b> months down with you, <span class="her-name">babe</span> ❤️</p>
+      <p class="tiny">(yes this is late. I was busy building a website. Worth it.)</p>
+
+      <div class="countdown" aria-live="off">
+        <h3>⏳ Countdown to our <span id="nextLabel">5 month</span> anniversary</h3>
+        <div class="cd-grid">
+          <div><b id="cdD">0</b><span>days</span></div>
+          <div><b id="cdH">0</b><span>hours</span></div>
+          <div><b id="cdM">0</b><span>mins</span></div>
+          <div><b id="cdS">0</b><span>secs</span></div>
+        </div>
+        <p class="tiny" id="nextDate"></p>
+      </div>
 
       <div class="stats" aria-label="How long we've been together">
-        <div class="stat"><b id="sMonths">4</b><span>months</span></div>
-        <div class="stat"><b id="sDays">0</b><span>days</span></div>
-        <div class="stat"><b id="sHours">0</b><span>hours</span></div>
+        <div class="stat"><b id="sDays">0</b><span>days together</span></div>
         <div class="stat"><b id="sSeconds">0</b><span>seconds (and counting)</span></div>
       </div>
 
@@ -263,6 +303,65 @@
     document.querySelectorAll(".your-name").forEach(el => el.textContent = CONFIG.yourName);
 
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    // ====== Pingu ======
+    const PINGU_SVG = `
+      <svg class="pingu" viewBox="0 0 120 145" role="img" aria-label="Pingu the penguin">
+        <g class="body">
+          <ellipse cx="42" cy="136" rx="15" ry="6" fill="#ff8a1f"/>
+          <ellipse cx="78" cy="136" rx="15" ry="6" fill="#ff8a1f"/>
+          <ellipse cx="22" cy="88" rx="10" ry="24" fill="#1c1c26" transform="rotate(20 22 88)"/>
+          <g class="flipper-r"><ellipse cx="98" cy="88" rx="10" ry="24" fill="#1c1c26" transform="rotate(-20 98 88)"/></g>
+          <ellipse cx="60" cy="82" rx="40" ry="54" fill="#1c1c26"/>
+          <ellipse cx="60" cy="96" rx="29" ry="38" fill="#fff"/>
+          <ellipse cx="60" cy="58" rx="27" ry="17" fill="#fff"/>
+          <ellipse cx="48" cy="46" rx="8" ry="9" fill="#fff" stroke="#1c1c26" stroke-width="1.5"/>
+          <ellipse cx="72" cy="46" rx="8" ry="9" fill="#fff" stroke="#1c1c26" stroke-width="1.5"/>
+          <circle cx="50" cy="48" r="3.6" fill="#1c1c26"/>
+          <circle cx="70" cy="48" r="3.6" fill="#1c1c26"/>
+          <ellipse cx="40" cy="64" rx="5" ry="3" fill="#ffb3c8"/>
+          <ellipse cx="80" cy="64" rx="5" ry="3" fill="#ffb3c8"/>
+          <g class="beak">
+            <ellipse cx="60" cy="62" rx="17" ry="7" fill="#ff7a1a"/>
+            <path d="M45 63 Q60 68 75 63" stroke="#c4500a" stroke-width="1.6" fill="none"/>
+          </g>
+        </g>
+      </svg>`;
+
+    function setupPingu(slot) {
+      slot.innerHTML = `<div class="pingu-wrap"><div class="speech"></div>${PINGU_SVG}</div>`;
+      const speech = slot.querySelector(".speech");
+      const svg = slot.querySelector(".pingu");
+      speech.textContent = slot.dataset.say;
+      if ("jump" in slot.dataset) svg.classList.add("jump");
+      let t;
+      svg.addEventListener("click", () => {
+        const prev = speech.textContent;
+        speech.textContent = "NOOT NOOT! 🎺";
+        svg.classList.add("noot");
+        clearTimeout(t);
+        t = setTimeout(() => { svg.classList.remove("noot"); speech.textContent = slot.dataset.say; }, 900);
+      });
+      return speech;
+    }
+    document.querySelectorAll(".pingu-slot").forEach(setupPingu);
+
+    // months since start (for the "X months ago" text)
+    function monthsBetween(start, now) {
+      let m = (now.getFullYear() - start.getFullYear()) * 12 + (now.getMonth() - start.getMonth());
+      if (now.getDate() < start.getDate()) m--;
+      return Math.max(0, m);
+    }
+    function addMonths(d, n) {
+      const r = new Date(d.getFullYear(), d.getMonth() + n, 1);
+      const last = new Date(r.getFullYear(), r.getMonth() + 1, 0).getDate();
+      r.setDate(Math.min(d.getDate(), last));
+      return r;
+    }
+    const START = new Date(CONFIG.startDate + "T00:00:00");
+    const agoMonths = monthsBetween(START, new Date());
+    document.querySelectorAll(".months-ago").forEach(el =>
+      el.textContent = agoMonths === 1 ? "1 month ago" : agoMonths + " months ago");
 
     // floating background hearts
     const bg = document.getElementById("bgHearts");
@@ -315,7 +414,9 @@
     // ====== the YES / NO game ======
     const yesBtn = document.getElementById("yesBtn");
     const noBtn = document.getElementById("noBtn");
-    const askEmoji = document.getElementById("askEmoji");
+    const askPingu = document.getElementById("askPingu");
+    const askSpeech = askPingu.querySelector(".speech");
+    const askEmoji = { set textContent(v) { askPingu.dataset.say = v; askSpeech.textContent = v; } };
     const askSub = document.getElementById("askSub");
 
     const noLines = [
@@ -385,16 +486,23 @@
 
     // ====== together-for counter ======
     function startCounter() {
-      const start = new Date(CONFIG.startDate + "T00:00:00");
+      const pad = n => String(n).padStart(2, "0");
       const update = () => {
         const now = new Date();
-        const diff = Math.max(0, now - start);
-        let months = (now.getFullYear() - start.getFullYear()) * 12 + (now.getMonth() - start.getMonth());
-        if (now.getDate() < start.getDate()) months--;
-        document.getElementById("sMonths").textContent = Math.max(0, months);
-        document.getElementById("sDays").textContent = Math.floor(diff / 864e5).toLocaleString();
-        document.getElementById("sHours").textContent = Math.floor(diff / 36e5).toLocaleString();
-        document.getElementById("sSeconds").textContent = Math.floor(diff / 1e3).toLocaleString();
+        const done = monthsBetween(START, now);
+        let next = addMonths(START, done + 1);
+        const left = Math.max(0, next - now);
+        document.getElementById("monthsDone").textContent = done;
+        document.getElementById("nextLabel").textContent = (done + 1) + " month";
+        document.getElementById("nextDate").textContent =
+          next.toLocaleDateString(undefined, { weekday: "long", day: "numeric", month: "long" }) + " · dinner's on me 🍝";
+        document.getElementById("cdD").textContent = Math.floor(left / 864e5);
+        document.getElementById("cdH").textContent = pad(Math.floor(left / 36e5) % 24);
+        document.getElementById("cdM").textContent = pad(Math.floor(left / 6e4) % 60);
+        document.getElementById("cdS").textContent = pad(Math.floor(left / 1e3) % 60);
+        const together = Math.max(0, now - START);
+        document.getElementById("sDays").textContent = Math.floor(together / 864e5).toLocaleString();
+        document.getElementById("sSeconds").textContent = Math.floor(together / 1e3).toLocaleString();
       };
       update();
       setInterval(update, 1000);
