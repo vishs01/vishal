@@ -165,6 +165,20 @@
     }
     .today-banner[hidden]{display:none}
 
+    /* photo gallery */
+    .gallery-title{margin:22px 0 4px}
+    .gallery{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin:14px 0 18px}
+    .polaroid{
+      margin:0;background:#fff;padding:8px 8px 10px;border-radius:4px;
+      box-shadow:0 6px 18px rgba(59,29,42,.18);
+      transform:rotate(-2.5deg);transition:transform .2s ease;
+    }
+    .polaroid:nth-child(even){transform:rotate(2.5deg)}
+    .polaroid:hover{transform:rotate(0) scale(1.03)}
+    .polaroid img{display:block;width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:2px;background:#f6e3ea}
+    .polaroid.wide{grid-column:1 / -1;justify-self:center;width:62%}
+    .polaroid figcaption{font-size:.78rem;margin-top:7px;line-height:1.3;color:var(--text)}
+
     /* confetti */
     .confetti{
       position:fixed;top:-30px;z-index:100;pointer-events:none;
@@ -263,6 +277,15 @@
         <div class="stat"><b id="sSeconds">0</b><span>seconds (and counting)</span></div>
       </div>
 
+
+      <h2 class="gallery-title">Us, so far 📸</h2>
+      <div class="gallery">
+        <figure class="polaroid"><img src="photos/us-1.jpg" alt="Us in front of the mountains" loading="lazy"><figcaption>Pretending we're not out of breath 🏔️</figcaption></figure>
+        <figure class="polaroid"><img src="photos/us-2.jpg" alt="Selfie on top of a mountain" loading="lazy"><figcaption>Top of the world, still not over text 😎</figcaption></figure>
+        <figure class="polaroid"><img src="photos/us-3.jpg" alt="Us by the lake" loading="lazy"><figcaption>Literal postcard couple 💌</figcaption></figure>
+        <figure class="polaroid"><img src="photos/us-4.jpg" alt="Rainy selfie, you sticking your tongue out" loading="lazy"><figcaption>Peak romance 😛🌧️</figcaption></figure>
+        <figure class="polaroid wide"><img src="photos/us-5.jpg" alt="Us by the canal" loading="lazy"><figcaption>Canal era 🚲 · more pics loading…</figcaption></figure>
+      </div>
 
       <p class="muted">Screenshot this as proof you said yes 📸</p>
       <div class="btn-row">
