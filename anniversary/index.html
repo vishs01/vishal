@@ -171,6 +171,14 @@
     .cd-grid span{font-size:.72rem;opacity:.9}
     .countdown .tiny{color:#fff;opacity:.9;margin-top:10px}
 
+    .today-banner{
+      margin:14px 0 0;padding:12px;border-radius:14px;
+      background:#fff2f6;border:2px dashed var(--pink);
+      font-weight:800;color:var(--pink-dark);font-size:1.1rem;
+      animation:wobble 2.2s ease-in-out infinite;
+    }
+    .today-banner[hidden]{display:none}
+
     /* confetti */
     .confetti{
       position:fixed;top:-30px;z-index:100;pointer-events:none;
@@ -250,10 +258,11 @@
       <div class="pingu-slot" data-jump data-say="NOOT NOOT!!! 🎉"></div>
       <h1>SHE SAID YES! (again)</h1>
       <p><b id="monthsDone">4</b> months down with you, <span class="her-name">babe</span> ❤️</p>
-      <p class="tiny">(yes this is late. I was busy building a website. Worth it.)</p>
+      <p class="tiny" id="lateNote">(yes this is late. I was busy building a website. Worth it.)</p>
+      <div class="today-banner" id="todayBanner" hidden>🎉 TODAY is our <span id="todayLabel">5 month</span> anniversary! 🎉</div>
 
       <div class="countdown" aria-live="off">
-        <h3>⏳ Countdown to our <span id="nextLabel">5 month</span> anniversary</h3>
+        <h3><span id="cdPrefix">⏳ Countdown to our</span> <span id="nextLabel">5 month</span> anniversary</h3>
         <div class="cd-grid">
           <div><b id="cdD">0</b><span>days</span></div>
           <div><b id="cdH">0</b><span>hours</span></div>
@@ -494,6 +503,14 @@
         const left = Math.max(0, next - now);
         document.getElementById("monthsDone").textContent = done;
         document.getElementById("nextLabel").textContent = (done + 1) + " month";
+        // on the anniversary day itself, celebrate today instead of apologising for being late
+        const isToday = done > 0 && addMonths(START, done).toDateString() === now.toDateString();
+        document.getElementById("todayBanner").hidden = !isToday;
+        document.getElementById("todayLabel").textContent = done + " month";
+        document.getElementById("lateNote").textContent = isToday
+          ? "(right on time this time 😎 no texts were harmed in the making of this)"
+          : "(yes this is late. I was busy building a website. Worth it.)";
+        document.getElementById("cdPrefix").textContent = isToday ? "⏳ Next up: our" : "⏳ Countdown to our";
         document.getElementById("nextDate").textContent =
           next.toLocaleDateString(undefined, { weekday: "long", day: "numeric", month: "long" }) + " · dinner's on me 🍝";
         document.getElementById("cdD").textContent = Math.floor(left / 864e5);
